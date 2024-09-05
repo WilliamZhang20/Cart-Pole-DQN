@@ -9,4 +9,6 @@ In this repository, I have trained a DQN to control a cart pole and keep it vert
 
 The file `agent.py` contains methods to train and execute actions for the cart pole controller agent, and the file `train_cartpole.py` runs training cycles and captures a video of the controller in action!
 
+So far, training takes an incredible number of time, between 30 minutes and an hour on a x86-64 CPU running an Intel i5.
+
 *Remains a work in progress*.

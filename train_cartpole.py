@@ -50,7 +50,7 @@ def train_agent():
 
 def make_video(agent):
     env = gym.make('CartPole-v1', render_mode="rgb_array")
-    env = RecordVideo(env, video_folder="cartpole-agent", name_prefix="eval",
+    env = RecordVideo(env, video_folder="cartpole-video", name_prefix="eval",
                   episode_trigger=lambda x: True)
 
     rewards = 0

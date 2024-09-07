@@ -1,0 +1,4 @@
+tensorflow
+gymnasium
+moviepy
+pygame

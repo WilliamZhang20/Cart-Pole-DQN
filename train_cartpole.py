@@ -1,5 +1,6 @@
 from agent import Agent
 import gymnasium as gym
+from gymnasium.wrappers import RecordEpisodeStatistics, RecordVideo
 import numpy as np
 
 env = gym.make("CartPole-v1")
@@ -43,18 +44,19 @@ for e in range(n_episodes):
 print("Done training")
 
 def make_video():
-    env = gym.make('CartPole-v1')
-    env.record('videos')
+    env = gym.make('CartPole-v1', render_mode="rgb_array", max_episode_steps=1000)
+    env = RecordVideo(env, video_folder="cartpole-agent", name_prefix="eval",
+                  episode_trigger=lambda x: True)
 
     rewards = 0
     steps = 0
     done = False
-    state = env.reset()
+    state, _ = env.reset() # split out the tuple
     state = np.array([state])
 
     while not done:
         action = agent.compute_action(state)
-        state, reward, done, _ = env.step(action)
+        state, reward, done, _, _ = env.step(action)
         state = np.array([state])
         steps += 1
         rewards += reward

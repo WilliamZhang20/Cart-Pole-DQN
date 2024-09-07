@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+import pickle
 
 from tensorflow import keras
 from tensorflow.keras.models import Sequential
@@ -20,16 +21,15 @@ class Agent: # Based on a DQN to map to the right moves
         self.lr = 0.001
         self.gamma = 0.99
         self.exp_prob = 1.0
-        self.decay = 0.005
+        self.decay = 0.01
         self.batch_size = 32
 
         # memory buffer, storing only 2000 at one time
         self.memory_buffer = list()
-        self.max_memory_buffer = 2000
+        self.max_memory_buffer = 3000
 
         # Sequentially grouping 2 hidden layers of 24 neurons each
         self.model = Sequential([
-            Input(shape=(state_size,)),
             Dense(units=24, activation='relu'),
             Dense(units=24, activation='relu'),
             Dense(units=action_size, activation='linear'),
@@ -92,3 +92,12 @@ class Agent: # Based on a DQN to map to the right moves
             q_current_state[0][experience["action"]] = q_target
 
             self.model.fit(current_state, q_current_state, verbose=0, epochs=1)
+    
+    def save(self, filename):
+        with open(filename, 'wb') as file:
+            pickle.dump(self, file)
+
+    @staticmethod
+    def load(filename):
+        with open(filename, 'rb') as file:
+            return pickle.load(file)

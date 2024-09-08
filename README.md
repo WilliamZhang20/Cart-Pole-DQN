@@ -23,6 +23,11 @@ So far, the maximum time it can do this is 5 seconds. Since each second comprise
 
 It is **continuous** balancing that is difficult and hard. To accomplish 5 seconds of that, took 1000 training rounds. Training that much alone took 3 hours to complete. Imagine how much it takes to even get to 1 minute of balancing. This is the challenge called reinforcement learning, [is](https://stevengong.co/notes/Reinforcement-Learning) it?
 
+Demonstration (A 5-second long GIF):
+
+![eval-episode-0](https://github.com/user-attachments/assets/d1386d34-112d-468e-bf0e-d99466100c0e)
+
+
 ## How it works
 
 The overall goal of the training process is to make sure that it holds the pole vertical for as long as possible. If the pole's angle exceeds 12 degrees, or the cart veers out of the 'video frame', then the game is over. 

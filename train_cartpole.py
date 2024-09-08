@@ -9,7 +9,7 @@ def train_agent():
     state_size = env.observation_space.shape[0]
     action_size = env.action_space.n # only 2 actions left or right!
 
-    n_episodes = 280
+    n_episodes = 1000 # maybe 450 - 500
     max_iteration_ep = 500
 
     # Agent defined

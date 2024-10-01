@@ -4,10 +4,10 @@ import pickle
 
 from tensorflow import keras
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Input
+from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 
-from matplotlib import pyplot as plt
+MODEL_CACHE = 'Cartpole_DQN_Model.keras'
 
 class Agent: # Based on a DQN to map to the right moves
     def __init__(self, state_size, action_size):
@@ -18,15 +18,15 @@ class Agent: # Based on a DQN to map to the right moves
         decay = rate of decay of the exploration probability
         batch_size = size of samples in 1 round
         '''
-        self.lr = 0.001
+        self.lr = 0.002
         self.gamma = 0.99
         self.exp_prob = 1.0
-        self.decay = 0.01
+        self.decay = 0.005
         self.batch_size = 32
 
         # memory buffer, storing only 2000 at one time
         self.memory_buffer = list()
-        self.max_memory_buffer = 3000
+        self.max_memory_buffer = 2000
 
         # Sequentially grouping 2 hidden layers of 24 neurons each
         self.model = Sequential([
@@ -94,10 +94,37 @@ class Agent: # Based on a DQN to map to the right moves
             self.model.fit(current_state, q_current_state, verbose=0, epochs=1)
     
     def save(self, filename):
-        with open(filename, 'wb') as file:
-            pickle.dump(self, file)
+        self.model.save(MODEL_CACHE)
+
+        agent_state = {
+            'exp_prob': self.exp_prob,
+            'memory_buffer': self.memory_buffer,  # Ensure your SumTree class has a proper serialization method
+            'decay': self.decay,
+            'lr': self.lr,
+            'gamma': self.gamma,
+            'batch_size': self.batch_size
+        }
+
+        with open(f"{filename}_state.pkl", 'wb') as file:
+            pickle.dump(agent_state, file)
 
     @staticmethod
-    def load(filename):
-        with open(filename, 'rb') as file:
-            return pickle.load(file)
+    def load(filename, state_size, action_size):
+        # Load the model weights
+        model = tf.keras.models.load_model(MODEL_CACHE)
+        
+        # Load hyperparameters and other agent states
+        with open(f"{filename}_state.pkl", 'rb') as file:
+            agent_state = pickle.load(file)
+        
+        agent = Agent(state_size, action_size)  # You need to pass state_size and action_size here
+        agent.model = model
+        agent.exp_prob = agent_state['exp_prob']
+        agent.memory_buffer = agent_state['memory_buffer']  # Ensure to properly initialize
+        agent.memory_buffer.data_index = agent_state['data_index']
+        agent.decay = agent_state['decay']
+        agent.lr = agent_state['lr']
+        agent.gamma = agent_state['gamma']
+        agent.batch_size = agent_state['batch_size']
+        
+        return agent

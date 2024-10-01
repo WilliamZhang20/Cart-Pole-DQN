@@ -9,7 +9,7 @@ def train_agent():
     state_size = env.observation_space.shape[0]
     action_size = env.action_space.n # only 2 actions left or right!
 
-    n_episodes = 1000 # maybe 450 - 500
+    n_episodes = 1000 # set to 1000 episodes
     max_iteration_ep = 500
 
     # Agent defined
@@ -29,9 +29,11 @@ def train_agent():
             # Agent computes actions in training setting
             action = agent.compute_action(current_state)
             # Run the action
-            next_state, reward, done, _, _ = env.step(action) # length of step tuple result is 5
+            next_state, reward, terminated, truncated, _ = env.step(action) # length of step tuple result is 5
 
             next_state = np.array([next_state])
+
+            done = terminated or truncated
 
             agent.store_episode(current_state, action, reward, next_state, done)
 
@@ -62,7 +64,8 @@ def make_video(agent):
 
     while not done:
         action = agent.compute_action(state)
-        state, reward, done, _, _ = env.step(action)
+        state, reward, terminated, truncated, _ = env.step(action)
+        done = terminated or truncated
         state = np.array([state])
         steps += 1
         rewards += reward
@@ -74,5 +77,8 @@ option = input()
 if option == "1":
     agent = train_agent()
 else:
+    env = gym.make("CartPole-v1")
+    state_size = env.observation_space.shape[0]
+    action_size = env.action_space.n # only 2 actions left or right!
     agent = Agent.load('trained_agent.pkl')
 make_video(agent)
